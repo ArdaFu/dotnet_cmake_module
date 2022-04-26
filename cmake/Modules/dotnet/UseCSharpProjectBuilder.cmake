@@ -178,17 +178,33 @@ function(csharp_add_project name)
         DEPENDS ${sources_dep}
     )
 
-    set(DOTNET_OUTPUT_PATH ${CSHARP_BUILDER_OUTPUT_PATH}/${CSHARP_TARGET_FRAMEWORK}/${DOTNET_CORE_RUNTIME}/publish/)
+    if(DOTNET_FOUND)
+        set(DOTNET_OUTPUT_PATH ${CSHARP_BUILDER_OUTPUT_PATH})
+        set_target_properties(${name}
+            PROPERTIES
+            EXECUTABLE
+            ${_csharp_add_project_EXECUTABLE}
+            OUTPUT_PATH
+            ${DOTNET_OUTPUT_PATH}
+            OUTPUT_NAME
+            ${name}${CSBUILD_OUTPUT_SUFFIX}.${ext}
+            DOTNET
+            ${DOTNET_FOUND}
+        )
+    elseif(DOTNET_CORE_FOUND)
+        set(DOTNET_OUTPUT_PATH ${CSHARP_BUILDER_OUTPUT_PATH}/${CSHARP_TARGET_FRAMEWORK}/${DOTNET_CORE_RUNTIME}/publish/)
+        set_target_properties(${name}
+            PROPERTIES
+            EXECUTABLE
+            ${_csharp_add_project_EXECUTABLE}
+            OUTPUT_PATH
+            ${DOTNET_OUTPUT_PATH}
+            OUTPUT_NAME
+            ${name}${CSBUILD_OUTPUT_SUFFIX}.${ext}
+            DOTNET_CORE
+            ${DOTNET_CORE_FOUND}
+        )
+    endif()
 
-    set_target_properties(${name}
-        PROPERTIES
-        EXECUTABLE
-        ${_csharp_add_project_EXECUTABLE}
-        OUTPUT_PATH
-        ${DOTNET_OUTPUT_PATH}
-        OUTPUT_NAME
-        ${name}${CSBUILD_OUTPUT_SUFFIX}.${ext}
-        DOTNET_CORE
-        ${DOTNET_CORE_FOUND}
-    )
+
 endfunction()
